@@ -1,12 +1,27 @@
+"""SQLite storage for vehicles, parking slots and payments."""
+
+import os
 import sqlite3
+from contextlib import contextmanager
 
-DB_NAME = "parking.db"
+# Stored next to this file so the program finds its data from any folder.
+DB_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), "parking.db")
 
 
+@contextmanager
 def get_connection():
+    """Open a connection, commit on success, roll back on error, always close."""
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
-    return conn
+    conn.execute("PRAGMA foreign_keys = ON")
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 
 def init_db():
