@@ -35,6 +35,8 @@ class FakeClock:
 
 
 class VehicleTests(unittest.TestCase):
+    """Validation, abstraction and the create_vehicle factory."""
+
     def test_vehicle_is_abstract(self):
         with self.assertRaises(TypeError):
             Vehicle("KA01AB1234")
@@ -67,7 +69,10 @@ class VehicleTests(unittest.TestCase):
 
 
 class FeeTests(unittest.TestCase):
+    """Car and Bike fee rules (method overriding)."""
+
     def fee(self, vehicle, **duration):
+        """Fee for a stay of the given length, e.g. fee(car, hours=2)."""
         return vehicle.calculate_fee(T0, T0 + timedelta(**duration))
 
     def test_minimum_one_hour(self):
@@ -90,6 +95,8 @@ class FeeTests(unittest.TestCase):
 
 
 class ParkingSlotTests(unittest.TestCase):
+    """Slot state changes and read-only attributes."""
+
     def test_occupy_and_free(self):
         slot = ParkingSlot(1, "car")
         slot.occupy()
@@ -117,6 +124,8 @@ class ParkingSlotTests(unittest.TestCase):
 
 
 class ParkingLotTests(unittest.TestCase):
+    """End-to-end lot operations on a temporary database."""
+
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
         self.old_db = database.DB_NAME
@@ -129,6 +138,7 @@ class ParkingLotTests(unittest.TestCase):
         shutil.rmtree(self.tmp)
 
     def new_lot(self):
+        """Open a lot on the test database (2 car slots, 1 bike slot)."""
         return ParkingLot(car_slots=2, bike_slots=1,
                           receipts_dir=os.path.join(self.tmp, "receipts"),
                           clock=self.clock)

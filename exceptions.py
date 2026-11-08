@@ -1,29 +1,38 @@
 """Custom exceptions for the parking lot system.
 
-Every error the application raises on purpose derives from ParkingError,
-so the menu can catch them all with a single ``except ParkingError``.
+Every error the application raises on purpose inherits from ParkingError,
+so the menu in main.py can handle all of them with one ``except ParkingError``
+while still letting each part of the code raise a specific, meaningful error.
+
+Hierarchy:
+    ParkingError
+    ├── InvalidInputError          bad plate, owner, vehicle type, slot data
+    ├── SlotUnavailableError       no free slot of the needed type
+    ├── SlotStateError             occupy a taken slot / free an empty one
+    ├── VehicleAlreadyParkedError  same plate parked twice
+    └── VehicleNotFoundError       removing a vehicle that is not parked
 """
 
 
 class ParkingError(Exception):
-    """Base class for all parking lot errors."""
+    """Base class for all errors raised by the parking lot system."""
 
 
 class InvalidInputError(ParkingError):
-    """Raised when user-supplied data fails validation."""
+    """User-supplied data failed validation (plate, owner, type, slot)."""
 
 
 class SlotUnavailableError(ParkingError):
-    """Raised when no free slot of the required type exists."""
+    """No free slot of the required vehicle type is left in the lot."""
 
 
 class SlotStateError(ParkingError):
-    """Raised when a slot is occupied twice or freed while already free."""
+    """A slot was occupied while already taken, or freed while already free."""
 
 
 class VehicleAlreadyParkedError(ParkingError):
-    """Raised when a vehicle that is already parked tries to park again."""
+    """A vehicle tried to park while it already has an active parking record."""
 
 
 class VehicleNotFoundError(ParkingError):
-    """Raised when removing a vehicle that has no active parking record."""
+    """A vehicle was removed but it has no active parking record."""

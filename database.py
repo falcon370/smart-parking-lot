@@ -1,19 +1,36 @@
-"""SQLite storage for vehicles, parking slots and payments."""
+"""SQLite storage for vehicles, parking slots and payments.
+
+Tables:
+    vehicles       one row per plate number ever seen
+    parking_slots  one row per slot, with its occupied flag
+    payments       one row per parking session; exit_time and amount stay
+                   NULL while the vehicle is still parked
+"""
 
 import os
 import sqlite3
 from contextlib import contextmanager
 
-# Stored next to this file so the program finds its data from any folder.
+# Database file kept next to this source file, so the program finds the same
+# data whichever folder it is started from. Tests replace this with a temp file.
 DB_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), "parking.db")
 
 
 @contextmanager
 def get_connection():
-    """Open a connection, commit on success, roll back on error, always close."""
+    """Open a database connection for use in a ``with`` block.
+
+    Changes are committed when the block ends normally, rolled back if an
+    exception is raised inside it, and the connection is always closed.
+    Rows can be read by column name (``row["plate_number"]``).
+
+    Example:
+        with get_connection() as conn:
+            conn.execute("UPDATE parking_slots SET is_occupied = 1 WHERE slot_id = 1")
+    """
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA foreign_keys = ON")  # enforce REFERENCES constraints
     try:
         yield conn
         conn.commit()
@@ -25,7 +42,7 @@ def get_connection():
 
 
 def init_db():
-    """Create the three tables if they don't exist yet."""
+    """Create the three tables if they do not exist yet. Safe to call every run."""
     with get_connection() as conn:
         conn.executescript("""
         CREATE TABLE IF NOT EXISTS vehicles (
