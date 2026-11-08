@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 
 # Runtime data (recreated automatically)
-parking.db
+*.db
 receipts/
 payments.csv
 
