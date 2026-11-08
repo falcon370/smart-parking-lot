@@ -14,6 +14,8 @@ Screenshots of the program running from a fresh database, in the order a user wo
 | 8 | [CSV export](#8-payment-export-csv) | File handling: CSV |
 | 9 | [Test results](#9-unit-test-results) | 24 automated tests passing |
 | 10 | [Database schema](#10-database-schema) | SQL tables for vehicles, slots and payments |
+| 11 | [UML class diagram](#11-uml-class-diagram) | Abstraction, inheritance, composition |
+| 12 | [Exception hierarchy](#12-exception-hierarchy) | Custom exceptions |
 
 ## 1. Main menu
 
@@ -76,3 +78,15 @@ Option 6 writes the payment history to `payments.csv`, shown here opened in Exce
 The three SQL tables and how they are linked. A `payments` row is a parking session: `exit_time` and `amount` stay empty until the vehicle leaves.
 
 ![Database schema](10-database.png)
+
+## 11. UML class diagram
+
+The main classes. `Car` and `Bike` inherit from the abstract `Vehicle` and each override `calculate_fee()`. `ParkingLot` owns its `ParkingSlot` objects (composition), parks vehicles and creates a `Payment` when a vehicle leaves. `-` marks private attributes, *italic* marks abstract methods, and underlined methods are static or class methods.
+
+![UML class diagram](11-uml.png)
+
+## 12. Exception hierarchy
+
+All custom errors inherit from `ParkingError`, so the menu can catch every expected problem with one `except ParkingError`.
+
+![Exception hierarchy](12-exception-uml.png)
