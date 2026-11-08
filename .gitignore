@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+
+# Runtime data (recreated automatically)
+parking.db
+receipts/
+payments.csv
+
+# Original course material, not part of the submission
+archive/
+
+# Editor
+.vscode/
