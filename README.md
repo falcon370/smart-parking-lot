@@ -223,25 +223,12 @@ A row is added to `payments` when a vehicle enters, with `exit_time` and `amount
 
 ## Sample Input and Output
 
-See [docs/sample_run.md](docs/sample_run.md) for a complete session, and [docs/screenshots/](docs/screenshots/) for screenshots.
+| Parking a car | Invalid input handled |
+|---|---|
+| <img src="docs/screenshots/02-car-parked.png" width="420" alt="Car parked in slot 1"> | <img src="docs/screenshots/03-error.png" width="420" alt="Error for unknown vehicle type"> |
+| **Checkout and receipt** | **All 24 tests passing** |
+| <img src="docs/screenshots/06-checkout.png" width="420" alt="Checkout receipt"> | <img src="docs/screenshots/09-test-results.png" width="420" alt="Unit test results"> |
 
-```
-Enter choice: 1
-Vehicle type (car/bike): car
-Plate number: ka01ab1234
-Owner name (optional): Ravi Kumar
-Car KA01AB1234, owner Ravi Kumar parked in slot 1.
-
-Enter choice: 2
-Plate number: KA01AB1234
-
-------- PARKING RECEIPT -------
-Receipt No : 1
-Vehicle    : KA01AB1234 (car)
-Slot       : 1
-Entry      : 2026-11-08 10:00:00
-Exit       : 2026-11-08 12:15:00
-Duration   : 2h 15m
-Amount     : Rs. 60.00
--------------------------------
-```
+More:
+- [All 12 screenshots with explanations](docs/screenshots/README.md): menu, availability, parked vehicles, receipt file, CSV export, database schema and UML.
+- [Full sample session as text](docs/sample_run.md), including multi-hour stays and the bike daily cap.
