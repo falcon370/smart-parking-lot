@@ -85,78 +85,91 @@ Files created while the program runs (not stored in git): `parking.db`, `receipt
 
 ## UML Class Diagram
 
+Each diagram fits on one screen, so it can be screenshotted directly from this page on GitHub.
+
+**Legend:** `+` public · `-` private (read through a property) · *italic* = abstract · underlined = static or class method · `<|--` inheritance · `*--` composition (the lot owns its slots) · `..>` uses or creates
+
+### Classes
+
 ```mermaid
 classDiagram
-    direction LR
+    direction TB
 
     class Vehicle {
         <<abstract>>
-        -__plate_number: str
-        -__owner: str
-        +plate_number: str
-        +owner: str
+        -plate_number : str
+        -owner : str
         +vehicle_type()* str
         +hourly_rate()* int
-        +calculate_fee(entry_time, exit_time)* float
-        +billable_hours(entry_time, exit_time)$ int
-        +__str__() str
+        +calculate_fee(entry, exit)* int
+        +billable_hours(entry, exit)$ int
     }
     class Car {
         +vehicle_type = "car"
         +hourly_rate = 20
-        +calculate_fee(entry_time, exit_time) float
+        +calculate_fee(entry, exit) int
     }
     class Bike {
         +DAILY_CAP = 100
         +vehicle_type = "bike"
         +hourly_rate = 10
-        +calculate_fee(entry_time, exit_time) float
-    }
-    class ParkingSlot {
-        -__slot_id: int
-        -__slot_type: str
-        -__is_occupied: bool
-        +slot_id: int
-        +slot_type: str
-        +is_occupied: bool
-        +can_fit(vehicle) bool
-        +occupy()
-        +free()
+        +calculate_fee(entry, exit) int
     }
     class ParkingLot {
-        +slots: list~ParkingSlot~
-        +receipts_dir: str
+        +slots : list~ParkingSlot~
+        +receipts_dir : str
         +park_vehicle(vehicle) ParkingSlot
-        +remove_vehicle(plate_number) Payment
+        +remove_vehicle(plate) Payment
         +availability() dict
         +active_vehicles() list
         +payment_history() list~Payment~
         +export_payments_csv(path) tuple
     }
+    class ParkingSlot {
+        -slot_id : int
+        -slot_type : str
+        -is_occupied : bool
+        +can_fit(vehicle) bool
+        +occupy()
+        +free()
+    }
     class Payment {
-        -__payment_id: int
-        -__plate_number: str
-        -__vehicle_type: str
-        -__slot_id: int
-        -__entry_time: datetime
-        -__exit_time: datetime
-        -__amount: float
-        +duration: str
+        -payment_id : int
+        -plate_number : str
+        -vehicle_type : str
+        -slot_id : int
+        -entry_time : datetime
+        -exit_time : datetime
+        -amount : float
+        +duration() str
         +receipt_text() str
         +save_receipt(folder) str
         +to_csv_row() list
         +from_row(row)$ Payment
     }
-    class ParkingError {
-        <<exception>>
-    }
 
-    Vehicle <|-- Car
-    Vehicle <|-- Bike
-    ParkingLot *-- "1..*" ParkingSlot : has
+    Vehicle <|-- Car : inherits
+    Vehicle <|-- Bike : inherits
+    ParkingLot "1" *-- "many" ParkingSlot : owns
     ParkingLot ..> Vehicle : parks
     ParkingLot ..> Payment : creates
-    ParkingLot ..> ParkingError : raises
+```
+
+### Exception Hierarchy
+
+```mermaid
+classDiagram
+    direction TB
+
+    class Exception
+    class ParkingError
+    class InvalidInputError
+    class SlotUnavailableError
+    class SlotStateError
+    class VehicleAlreadyParkedError
+    class VehicleNotFoundError
+
+    Exception <|-- ParkingError
     ParkingError <|-- InvalidInputError
     ParkingError <|-- SlotUnavailableError
     ParkingError <|-- SlotStateError
