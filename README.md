@@ -2,6 +2,13 @@
 
 A menu-driven Python application that manages a parking lot. It allocates slots to cars and bikes, tracks which slots are free, calculates parking fees and generates receipts. Vehicles, parking slots and payments are stored in an SQLite database. Receipts are saved as text files, and payment history can be exported to CSV.
 
+| | |
+|---|---|
+| **Submitted by** | Pranav Napolean |
+| **Programme** | B.Tech CSE (AI & DS) |
+| **Department** | Department of Computer Science and Engineering |
+| **Course** | CS2203 Python Programming |
+
 ## Problem Statement
 
 Manual parking management is slow and error-prone. Attendants have to find free slots by hand, note entry times on paper and work out fees themselves, which leads to lost records, wrong charges and disputes. A software system can allocate slots automatically, record every entry and exit, apply the correct tariff for each vehicle type and give the customer a receipt.
