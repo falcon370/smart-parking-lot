@@ -5,7 +5,8 @@
 **Programme:** B.Tech CSE (AI & DS)  
 **Department:** Department of Computer Science and Engineering  
 **Institute:** National Institute of Technology Warangal  
-**Course:** CS2203 Python Programming
+**Course:** CS2203 Python Programming  
+**Professor:** Prof. Venkateswara Rao Kagita
 
 ## Problem Statement
 
