@@ -1,63 +1,58 @@
 # Smart Parking Lot Management System
 
-A menu-driven Python application that manages a parking lot. It allocates slots to cars and bikes, tracks which slots are free, calculates parking fees and generates receipts. Vehicles, parking slots and payments are stored in an SQLite database. Receipts are saved as text files, and payment history can be exported to CSV.
-
-| | |
-|---|---|
-| **Submitted by** | Pranav Napolean |
-| **Roll No.** | 25CSB1A69 |
-| **Programme** | B.Tech CSE (AI & DS) |
-| **Department** | Department of Computer Science and Engineering |
-| **Course** | CS2203 Python Programming |
-| **Institute** | National Institute of Technology Warangal (NITW) |
+**Submitted by:** Pranav Napolean  
+**Roll No.:** 25CSB1A69  
+**Programme:** B.Tech CSE (AI & DS)  
+**Department:** Department of Computer Science and Engineering  
+**Institute:** National Institute of Technology Warangal  
+**Course:** CS2203 Python Programming
 
 ## Problem Statement
 
-Manual parking management is slow and error-prone. Attendants have to find free slots by hand, note entry times on paper and work out fees themselves, which leads to lost records, wrong charges and disputes. A software system can allocate slots automatically, record every entry and exit, apply the correct tariff for each vehicle type and give the customer a receipt.
+Managing a parking lot by hand is slow and prone to mistakes. Attendants have to search for free slots and write down entry times. They also have to work out each fee themselves. This leads to lost records and wrong charges. This project builds a Python program that does this work automatically and keeps a record of every visit.
 
 ## Objectives
 
-- Model a parking lot with object-oriented classes: `Vehicle`, `Car`, `Bike`, `ParkingSlot`, `ParkingLot` and `Payment`.
-- Allocate the first free slot of the matching type (car or bike) when a vehicle arrives.
-- Track slot availability in real time.
-- Calculate parking fees using per-vehicle tariffs.
-- Generate a receipt for every exit and keep a payment history.
-- Store data in SQL (SQLite) so it is kept between runs, and use text and CSV files for receipts and reports.
-- Validate all input and handle invalid operations with clear error messages.
+1. Model the parking lot using Python classes and objects.
+2. Give an arriving vehicle a free slot of the correct type.
+3. Track which slots are free at any time.
+4. Calculate the parking fee for each type of vehicle.
+5. Print a receipt when a vehicle leaves and keep a payment history.
+6. Store all data in an SQL database so that it is kept between runs.
+7. Check all input and report errors clearly without stopping the program.
 
 ## Project Description
 
-The lot starts with **5 car slots (1–5)** and **5 bike slots (6–10)**. When a vehicle parks, the system:
+The lot has 5 car slots numbered 1 to 5 and 5 bike slots numbered 6 to 10.
 
-1. checks that the plate number is valid and the vehicle is not already parked,
-2. assigns the first free slot of the right type,
-3. records the vehicle and its entry time in the database.
+When a vehicle arrives the program first checks the plate number. It then gives the vehicle the first free slot of its type and records the entry time. When the vehicle leaves the program calculates the fee and frees the slot. It prints a receipt and saves a copy as a text file. The full payment history can also be exported to a CSV file.
 
-When the vehicle leaves, the system calculates the fee, marks the slot free, stores the payment and prints a receipt. The receipt is also saved to `receipts/receipt_<no>.txt`.
+The program stores its data in an SQLite database with three tables. One table holds vehicles. A second holds parking slots. A third holds payments.
 
-### Tariffs
+### Parking Fees
 
-| Vehicle | Rate | Rule |
-|---|---|---|
-| Car | Rs. 20 per hour | Every started hour is charged in full, with a minimum of 1 hour |
-| Bike | Rs. 10 per hour | Same as car, but capped at Rs. 100 per day (24 hours) |
+1. Cars pay Rs. 20 for every hour or part of an hour.
+2. Bikes pay Rs. 10 for every hour or part of an hour.
+3. A bike never pays more than Rs. 100 for one day.
+4. Every stay is charged for at least one hour.
 
 ## How to Run
 
-**Requirements:** Python 3.8 or newer. No extra packages are needed, since only the standard library is used (`sqlite3`, `csv`, `abc`, `datetime`).
+The program needs Python 3.8 or newer. No extra packages are required.
 
-```bash
-git clone https://github.com/falcon370/smart-parking-lot.git
-cd smart-parking-lot
+1. Unzip the project folder.
+2. Open a terminal inside that folder.
+3. Run the command below.
+
+```
 python main.py
 ```
 
-The database `parking.db` is created automatically on the first run. To start again with an empty lot, delete `parking.db`.
+The database file is created on the first run. Delete parking.db to start again with an empty lot.
 
-### Menu
+The program shows this menu.
 
 ```
-========= SMART PARKING LOT =========
 1. Park vehicle
 2. Remove vehicle (pay and get receipt)
 3. Show slot availability
@@ -65,179 +60,155 @@ The database `parking.db` is created automatically on the first run. To start ag
 5. Show payment history
 6. Export payments to CSV
 7. Exit
-=====================================
 ```
 
-### Running the Tests
+To run the automated tests use this command.
 
-```bash
-python -m unittest discover -s tests -v
 ```
-
-The tests use a temporary database, so your real data is never changed. See [TEST_CASES.md](TEST_CASES.md) for the full list of test cases and their results.
+python -m unittest discover tests
+```
 
 ## Project Structure
 
 ```
-main.py           Menu-driven user interface
-parking_lot.py    ParkingLot: allocation, fees, history, CSV export
-vehicle.py        Vehicle (abstract), Car, Bike, create_vehicle() factory
-parking_slot.py   ParkingSlot
-payment.py        Payment: receipt text, receipt file, CSV row
-database.py       SQLite connection and table creation
-exceptions.py     Custom exception classes
-tests/            Unit tests
-docs/             Sample run output and screenshots
+main.py            Menu and user input
+parking_lot.py     ParkingLot class
+vehicle.py         Vehicle base class with Car and Bike
+parking_slot.py    ParkingSlot class
+payment.py         Payment class and receipts
+database.py        SQLite connection and tables
+exceptions.py      Custom error classes
+tests              Automated tests
+docs/screenshots   Screenshots of the program
 ```
-
-Files created while the program runs (not stored in git): `parking.db`, `receipts/`, `payments.csv`.
 
 ## UML Class Diagram
 
-Each diagram fits on one screen, so it can be screenshotted directly from this page on GitHub.
+Car and Bike inherit from the abstract Vehicle class. ParkingLot owns many ParkingSlot objects. It parks vehicles and creates a Payment when a vehicle leaves. A minus sign marks a private attribute. Abstract methods are shown in italics.
 
-**Legend:** `+` public · `-` private (read through a property) · *italic* = abstract · underlined = static or class method · `<|--` inheritance · `*--` composition (the lot owns its slots) · `..>` uses or creates
+![UML class diagram](docs/screenshots/11-uml.png)
 
-### Classes
+All custom errors inherit from ParkingError.
 
-```mermaid
-classDiagram
-    direction TB
+![Exception classes](docs/screenshots/12-exception-uml.png)
 
-    class Vehicle {
-        <<abstract>>
-        -plate_number : str
-        -owner : str
-        +vehicle_type()* str
-        +hourly_rate()* int
-        +calculate_fee(entry, exit)* int
-        +billable_hours(entry, exit)$ int
-    }
-    class Car {
-        +vehicle_type = "car"
-        +hourly_rate = 20
-        +calculate_fee(entry, exit) int
-    }
-    class Bike {
-        +DAILY_CAP = 100
-        +vehicle_type = "bike"
-        +hourly_rate = 10
-        +calculate_fee(entry, exit) int
-    }
-    class ParkingLot {
-        +slots : list~ParkingSlot~
-        +receipts_dir : str
-        +park_vehicle(vehicle) ParkingSlot
-        +remove_vehicle(plate) Payment
-        +availability() dict
-        +active_vehicles() list
-        +payment_history() list~Payment~
-        +export_payments_csv(path) tuple
-    }
-    class ParkingSlot {
-        -slot_id : int
-        -slot_type : str
-        -is_occupied : bool
-        +can_fit(vehicle) bool
-        +occupy()
-        +free()
-    }
-    class Payment {
-        -payment_id : int
-        -plate_number : str
-        -vehicle_type : str
-        -slot_id : int
-        -entry_time : datetime
-        -exit_time : datetime
-        -amount : float
-        +duration() str
-        +receipt_text() str
-        +save_receipt(folder) str
-        +to_csv_row() list
-        +from_row(row)$ Payment
-    }
+### Database Design
 
-    Vehicle <|-- Car : inherits
-    Vehicle <|-- Bike : inherits
-    ParkingLot "1" *-- "many" ParkingSlot : owns
-    ParkingLot ..> Vehicle : parks
-    ParkingLot ..> Payment : creates
-```
+A payment row is created when a vehicle enters. Its exit time and amount stay empty until the vehicle leaves.
 
-### Exception Hierarchy
+![Database tables](docs/screenshots/10-database.png)
 
-```mermaid
-classDiagram
-    direction TB
+## Object Oriented Concepts Used
 
-    class Exception
-    class ParkingError
-    class InvalidInputError
-    class SlotUnavailableError
-    class SlotStateError
-    class VehicleAlreadyParkedError
-    class VehicleNotFoundError
+**Abstraction.** Vehicle is an abstract class. It states what every vehicle must provide but not how. Car and Bike fill in the details. A plain Vehicle object cannot be created.
 
-    Exception <|-- ParkingError
-    ParkingError <|-- InvalidInputError
-    ParkingError <|-- SlotUnavailableError
-    ParkingError <|-- SlotStateError
-    ParkingError <|-- VehicleAlreadyParkedError
-    ParkingError <|-- VehicleNotFoundError
-```
+**Inheritance.** Car and Bike inherit the plate checks and shared helper methods from Vehicle. All custom errors inherit from ParkingError.
 
-### Database Schema
+**Method overriding.** Car and Bike each override the fee calculation method. Cars pay a flat hourly rate. Bikes pay a lower rate with a daily limit.
 
-```mermaid
-erDiagram
-    vehicles ||--o{ payments : "has"
-    parking_slots ||--o{ payments : "used in"
-    vehicles {
-        INTEGER vehicle_id PK
-        TEXT plate_number UK
-        TEXT vehicle_type
-        TEXT owner
-    }
-    parking_slots {
-        INTEGER slot_id PK
-        TEXT slot_type
-        INTEGER is_occupied
-    }
-    payments {
-        INTEGER payment_id PK
-        INTEGER vehicle_id FK
-        INTEGER slot_id FK
-        TEXT entry_time
-        TEXT exit_time
-        REAL amount
-    }
-```
+**Polymorphism.** When a vehicle leaves the ParkingLot calls its fee method without checking its type. Python runs the Car version or the Bike version as needed.
 
-A row is added to `payments` when a vehicle enters, with `exit_time` and `amount` empty. A vehicle counts as currently parked while its `exit_time` is empty, and the row is completed when it leaves.
+**Encapsulation.** Data inside Vehicle and ParkingSlot and Payment is private. Plate numbers and owner names are checked every time they are set. A slot changes state only through its occupy and free methods. These refuse invalid changes such as filling a slot that is already taken.
 
-## How the Requirements Are Met
+**Composition.** A ParkingLot holds its ParkingSlot objects. It also creates Payment objects.
 
-| Requirement | Where it is implemented |
-|---|---|
-| Classes and objects (6 classes and an exception hierarchy) | `Vehicle`, `Car`, `Bike`, `ParkingSlot`, `ParkingLot`, `Payment` |
-| **Abstraction** | `Vehicle` is an abstract base class (`ABC`). It cannot be created directly and declares the abstract members `vehicle_type`, `hourly_rate` and `calculate_fee`. |
-| **Inheritance** | `Car` and `Bike` inherit from `Vehicle`, and all custom exceptions inherit from `ParkingError`. |
-| **Method overriding** | `Car.calculate_fee` and `Bike.calculate_fee` each override the abstract method. Bike adds a daily cap. |
-| **Polymorphism** | `ParkingLot.remove_vehicle` calls `vehicle.calculate_fee(...)` without knowing whether it is a car or a bike. `create_vehicle()` builds the right subclass from a type name. |
-| **Encapsulation** | Private `__attributes` in `Vehicle`, `ParkingSlot` and `Payment`. Validating setters check plate numbers and owner names. `is_occupied` is read-only and only changes through `occupy()`/`free()`, which refuse invalid changes. |
-| **Composition** | A `ParkingLot` owns its `ParkingSlot` objects and creates `Payment` objects. |
-| **Exception handling** | Custom exceptions in `exceptions.py` (invalid plate or type, lot full, already parked, not found). The menu catches `ParkingError`, `sqlite3.Error`, `OSError` and `Ctrl+C`/`Ctrl+D`. |
-| **Data between runs** | SQLite database (`parking.db`), text receipts (`receipts/*.txt`) and CSV export (`payments.csv`). |
-| **Menu-driven interface** | `main.py` |
+## Exception Handling
+
+Each expected problem has its own exception class. Examples include a full lot and an invalid plate number. Another is a vehicle that tries to park twice. The menu catches these errors and shows a short message. It also handles database errors and file errors. The program never stops with a traceback.
+
+## File Handling
+
+Data is kept between runs in three ways.
+
+1. The SQLite database stores all vehicles and slots and payments.
+2. Each receipt is saved as a text file in the receipts folder.
+3. The payment history can be exported to payments.csv.
 
 ## Sample Input and Output
 
-| Parking a car | Invalid input handled |
-|---|---|
-| <img src="docs/screenshots/02-car-parked.png" width="420" alt="Car parked in slot 1"> | <img src="docs/screenshots/03-error.png" width="420" alt="Error for unknown vehicle type"> |
-| **Checkout and receipt** | **All 24 tests passing** |
-| <img src="docs/screenshots/06-checkout.png" width="420" alt="Checkout receipt"> | <img src="docs/screenshots/09-test-results.png" width="420" alt="Unit test results"> |
+**1. Main menu**
 
-More:
-- [All 12 screenshots with explanations](docs/screenshots/README.md): menu, availability, parked vehicles, receipt file, CSV export, database schema and UML.
-- [Full sample session as text](docs/sample_run.md), including multi-hour stays and the bike daily cap.
+![Main menu](docs/screenshots/01-menu-options.png)
+
+**2. Parking a car.** The car gets slot 1.
+
+![Car parked](docs/screenshots/02-car-parked.png)
+
+**3. Invalid input.** An unknown vehicle type shows an error and the program continues.
+
+![Error message](docs/screenshots/03-error.png)
+
+**4. Parking a bike and checking availability.** The bike gets slot 6 because bikes use their own slots.
+
+![Availability](docs/screenshots/04-availability.png)
+
+**5. Parked vehicles**
+
+![Parked vehicles](docs/screenshots/05-parked-report.png)
+
+**6. Checkout and receipt.** A five minute stay is charged for one full hour.
+
+![Checkout](docs/screenshots/06-checkout.png)
+
+**7. Receipt saved as a text file**
+
+![Receipt file](docs/screenshots/07-checkout-receipt.png)
+
+**8. Payment history exported to CSV and opened in Excel**
+
+![CSV export](docs/screenshots/08-payment-report.png)
+
+## Test Cases and Results
+
+The project has 24 automated tests. Each test uses its own temporary database so real data is never changed. All 24 tests pass.
+
+![Test results](docs/screenshots/09-test-results.png)
+
+### Vehicle Tests
+
+1. A plain Vehicle object cannot be created. **Pass**
+2. A plate typed in lower case is stored in upper case. **Pass**
+3. Invalid plates such as an empty plate or AB@12 are rejected. **Pass**
+4. Changing a plate to an invalid value is refused and the old plate is kept. **Pass**
+5. An owner name with digits or with more than 50 letters is rejected. **Pass**
+6. The names car and bike create the right class and an unknown type is rejected. **Pass**
+
+### Fee Tests
+
+7. A short stay is charged for one full hour. **Pass**
+8. A car parked for 2 hours 1 minute pays Rs. 60. **Pass**
+9. A bike pays Rs. 100 for 12 hours and Rs. 120 for 26 hours. **Pass**
+10. A car parked for 12 hours pays Rs. 240. **Pass**
+11. An exit time earlier than the entry time is rejected. **Pass**
+
+### Parking Slot Tests
+
+12. A slot can be filled and then freed. **Pass**
+13. Filling a full slot or freeing an empty slot is refused. **Pass**
+14. The occupied status of a slot cannot be changed directly. **Pass**
+15. A slot numbered 0 or with an unknown type is rejected. **Pass**
+
+### Parking Lot Tests
+
+16. Each vehicle gets the first free slot of its type. **Pass**
+17. Parking is refused when all slots of that type are full. **Pass**
+18. The same vehicle cannot park twice. **Pass**
+19. A plate stored as a car cannot later park as a bike. **Pass**
+20. A car removed after 2 hours 30 minutes pays Rs. 60. Its slot is freed and its receipt file is saved. **Pass**
+21. Removing a vehicle that is not parked is refused. **Pass**
+22. A vehicle can park again after it leaves. **Pass**
+23. Parked vehicles are still listed after the program restarts. **Pass**
+24. The payment history and the CSV file both list every payment correctly. **Pass**
+
+### Manual Menu Tests
+
+25. Menu choice 9 shows an error and the menu appears again. **Pass**
+26. Vehicle type truck shows an error. **Pass**
+27. Plate number !! shows an error. **Pass**
+28. Removing plate NOPE123 shows an error. **Pass**
+29. Pressing Ctrl+Z and then Enter closes the program cleanly. **Pass**
+30. A parked bike is still listed after the program is restarted. **Pass**
+
+## Conclusion
+
+The project meets its objectives. It allocates slots and tracks availability. It calculates fees and produces receipts. It keeps all records between runs. The design uses abstraction and inheritance along with polymorphism and encapsulation. Composition links the parking lot to its slots. Possible future work includes reserved slots and monthly passes and a graphical interface.
